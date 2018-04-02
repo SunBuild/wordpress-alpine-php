@@ -9,8 +9,9 @@ MAINTAINER Azure App Service Container Images <appsvc-images@microsoft.com>
 # ========
 
 # wordpress
-ENV WORDPRESS_SOURCE "/usr/src/wordpress"
-ENV WORDPRESS_HOME "/home/site/wwwroot"
+ENV WORDPRESS_SOURCE "/var/www"
+ENV WORDPRESS_HOME "/var/www"
+ENV GIT_REPO=https://github.com/azureappserviceoss/wordpress-azure.git 
 
 #
 ENV DOCKER_BUILD_HOME "/dockerbuild"
@@ -31,7 +32,7 @@ RUN set -ex \
 	# ------------	
 	# 2. wordpress
 	# ------------
-	&& mkdir -p $WORDPRESS_SOURCE \
+	&& apk add --update git \
         # cp in final
 	# ----------
 	# ~. clean up
@@ -53,8 +54,7 @@ RUN set -ex \
 # =====
 # final
 # =====
-COPY wp.tar.gz $WORDPRESS_SOURCE/
-COPY wp-config.php $WORDPRESS_SOURCE/
+COPY wp-config.php $WORDPRESS_HOME/
 
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh

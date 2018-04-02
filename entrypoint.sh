@@ -49,12 +49,16 @@ load_phpmyadmin(){
 }
 
 setup_wordpress(){
-	test ! -d "$WORDPRESS_HOME" && echo "INFO: $WORDPRESS_HOME not found. creating ..." && mkdir -p "$WORDPRESS_HOME"
+	if [ ! -d "/var/www" ]; then
+ 		 mkdir -p /var/www
+        fi
 
-	cd $WORDPRESS_SOURCE
-	tar -xf wp.tar.gz -C $WORDPRESS_HOME/ --strip-components=1
-	
-	chown -R www-data:www-data $WORDPRESS_HOME
+# Git pull wordpress core 
+	if [ ! -d "/var/www" ]; then
+ 	 git clone "$GIT_REPO" /var/www
+	else
+ 	 git -C /var/www pull
+	fi
     
 }
 
@@ -77,8 +81,9 @@ load_wordpress(){
 
 test ! -d "$APP_HOME" && echo "INFO: $APP_HOME not found. creating..." && mkdir -p "$APP_HOME"
 if [ ! $WEBSITES_ENABLE_APP_SERVICE_STORAGE ]; then 
-    echo "INFO: NOT in Azure, chown for "$APP_HOME 
+    echo "INFO: NOT in Azure, chown for "$APP_HOME
     chown -R www-data:www-data $APP_HOME
+    
 fi
 
 test ! -d "$HTTPD_LOG_DIR" && echo "INFO: $HTTPD_LOG_DIR not found. creating..." && mkdir -p "$HTTPD_LOG_DIR"
@@ -120,6 +125,8 @@ if [ "${DATABASE_TYPE}" == "local" ]; then
         echo 'Include conf/httpd-phpmyadmin.conf' >> $HTTPD_CONF_FILE
     fi
 fi
+
+
 
 # That wp-config.php doesn't exist means WordPress is not installed/configured yet.
 if [ ! -e "$WORDPRESS_HOME/wp-config.php" ]; then
