@@ -9,7 +9,6 @@ MAINTAINER Azure App Service Container Images <appsvc-images@microsoft.com>
 # ========
 
 # wordpress
-ENV WORDPRESS_SOURCE "/var/www"
 ENV WORDPRESS_HOME "/var/www"
 ENV GIT_REPO=https://github.com/azureappserviceoss/wordpress-azure.git 
 
